@@ -7,5 +7,5 @@
 ## 🚀 Quick Start
 ```bash
 # Clone and setup
-git clone https://github.com/yourusername/pegasus-case-study.git
+git clone https://github.com/Dhanush-Subhash/pegasus_CaseStudy.git
 cd pegasus-case-study
