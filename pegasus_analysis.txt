@@ -1,6 +1,6 @@
 Executive Summary
 
-For the past several months, the Lookout Security Intelligence team has been closely tracking
+1.For the past several months, the Lookout Security Intelligence team has been closely tracking
 the features and tradecraft of targeted nation-state level malware attacks against mobile users.
 In the initial investigation into the software developed by lawful intercept vendor NSO Group, we
 examined the common features and methodologies that are frequently used to perform
@@ -39,8 +39,7 @@ and nation state-like groups. These groups produce advanced persistent threats (
 mobile with the specific goal of tracking a target not only in the physical world, but also the
 virtual world. As nation states continue to expand their mobile capabilities, it is important to
 provide detailed analysis of the capabilities that threat actors are deploying on the mobile
-2
-platform in order to expand the industry’s knowledge and ability to protect against this type of
+2. platform in order to expand the industry’s knowledge and ability to protect against this type of
 threat globally.
 
 
@@ -79,14 +78,13 @@ anomalies identified from our large anonymized corpus of data, we were able to f
 number of unique indicators of compromise (IOCs) that acted as signals to flag specific outliers
 within our sensor network. Combining several layers of signal intelligence, including detections
 of Pegasus for iOS, allowed the team to identify these indicators for deeper analysis.
-3
-With an identified set of indicators to investigate, we analyzed the data that indicated these
+
+3.With an identified set of indicators to investigate, we analyzed the data that indicated these
 findings were anomalous. Our Security Intelligence analysts were able to pinpoint a suspect set
 of apps which did not exist anywhere else in the world, including in public app stores or on
 public sources like VirusTotal. These apps contained metadata such as package names and
 signer information that only appeared in very limited cases which correlated with
-Pegasus-specific IOCs. This type of big data set is invaluable for both preserving user privacy
-and engaging in threat hunting and threat intelligence.
+Pegasus-specific IOCs.
 
 
 Pegasus for Android Overview
