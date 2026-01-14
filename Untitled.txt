@@ -1,0 +1,183 @@
+Executive Summary
+
+For the past several months, the Lookout Security Intelligence team has been closely tracking
+the features and tradecraft of targeted nation-state level malware attacks against mobile users.
+In the initial investigation into the software developed by lawful intercept vendor NSO Group, we
+examined the common features and methodologies that are frequently used to perform
+espionage using the mobile platform.
+Building on our initial technical analysis of NSO’s Pegasus software after the August 2016
+discovery of Pegasus, the security intelligence teams at Google and Lookout collaborated to
+discover and track Pegasus as it exists on the Android platform (aka Chrysaor) in order to roll
+out protection for Android users. This investigation originated with the Lookout August report
+and led to all Android, users being protected against this threat.
+On the Android platform, the Pegasus software has many of the same features that we
+described in the original Lookout report. The samples that Google acquired, and we analyzed
+for this report, existed as an Android application (APK) that compromised the device to install its
+malicious payload. These samples are dated, but given the recent Pegasus activity on devices
+observed by both Google and Lookout, the analysis represents important new insight into this
+spyware.
+Pegasus for Android has similar capabilities to its iOS counterpart including:
+● Exfiltrate targeted data from common apps including:
+○ WhatsApp
+○ Skype
+○ Facebook
+○ Viber
+○ Kakao
+○ Twitter
+○ Gmail
+○ Android’s Native Browser and Chrome
+○ Android’s Native Email
+● Remote control of the device using SMS
+● Surveillance of:
+○ Audio via the microphone
+○ Imagery via the camera (front and rear)
+● Keylogging
+● Screenshot capture
+● Disabling of system updates
+Pegasus for Android is an example of the common feature-set that we see from nation states
+and nation state-like groups. These groups produce advanced persistent threats (APT) for
+mobile with the specific goal of tracking a target not only in the physical world, but also the
+virtual world. As nation states continue to expand their mobile capabilities, it is important to
+provide detailed analysis of the capabilities that threat actors are deploying on the mobile
+2
+platform in order to expand the industry’s knowledge and ability to protect against this type of
+threat globally.
+
+
+Background
+
+In August 2016, Lookout published a technical analysis of Pegasus for iOS, a sophisticated,
+targeted lawful-intercept attack that was actively targeting a number of mobile users globally.
+We published our findings in the Technical Analysis of Pegasus Spyware report upon the
+release of Apple’s iOS 9.3.5 patch. The patch closed the attack vector — Trident, an exploit of
+three related zero-day vulnerabilities in iOS — which Pegasus used to exploit the target device.
+Lookout protected its customers against Pegasus for iOS at that point.
+Pegasus is highly advanced in its stealth, its use of exploits, its code obfuscation, and its
+encryption. It has a broad surveillanceware feature set that takes advantage of functionality
+available on mobile, such as:
+● Always-on communications over Wi-Fi, 3G, or 4G
+● Phone
+● Messaging and email apps such as WhatsApp, Facebook, and Viber
+● Camera
+● Contact list
+● Keystroke logging.
+
+The original report shed light on the presence of advanced “lawful intercept” technologies.
+Lookout, along with Citizen Lab, established that the Pegasus surveillanceware software
+product is developed by NSO Group. According to news reports, NSO Group sells weaponized
+software that targets mobile phones to governments. News reports indicate that the Pegasus
+spyware is sold for use on high-value targets for multiple purposes, including sophisticated
+espionage on iOS, Blackberry, and Android.
+Our research into Pegasus for Android began in late 2016, at which point we shared the initial
+findings and began our collaboration with Google. Our team set out to discover and ultimately
+enable detection of the Android version of NSO’s Pegasus software.
+Threat Hunting and Joint Investigation
+Immediately upon discovery of the iOS version of Pegasus, Lookout’s team of intelligence
+analysts and data scientists began hunting down Pegasus for Android via a combination of
+automated and manual analysis of the telemetry from the Lookout Security Cloud. Using
+anomalies identified from our large anonymized corpus of data, we were able to focus on a
+number of unique indicators of compromise (IOCs) that acted as signals to flag specific outliers
+within our sensor network. Combining several layers of signal intelligence, including detections
+of Pegasus for iOS, allowed the team to identify these indicators for deeper analysis.
+3
+With an identified set of indicators to investigate, we analyzed the data that indicated these
+findings were anomalous. Our Security Intelligence analysts were able to pinpoint a suspect set
+of apps which did not exist anywhere else in the world, including in public app stores or on
+public sources like VirusTotal. These apps contained metadata such as package names and
+signer information that only appeared in very limited cases which correlated with
+Pegasus-specific IOCs. This type of big data set is invaluable for both preserving user privacy
+and engaging in threat hunting and threat intelligence.
+
+
+Pegasus for Android Overview
+
+The version of Pegasus for Android, known as Chrysaor, exists primarily as an app, of which
+there are several variants. These variants carry with them different file hashes, signers, package
+names, and content. The samples discussed here carry with them an APK that can be broken
+up into a Java component and native code component.
+The Java layer — what most Android developers are familiar with when creating apps — is
+responsible for controlling, installing, and orchestrating the surveillance functions of Pegasus.
+The native code layer is responsible for a variety of tasks including the exploiting of the device,
+gaining elevated privileges (root access), and hooking the processes of other apps.
+
+
+Android vs. iOS Pegasus Sample Comparison
+
+The Android and iOS Pegasus samples share a lot of common functionality, including: process
+hooking, the ability to update and be controlled via SMS, audio surveillance, and self-destruct
+functionality to hide its tracks.
+The table below highlights some of the similarities and differences between the two platforms
+based on the samples our analysts have reviewed. From these samples, we determined
+Pegasus uses known Android exploits to compromise an Android device. In this case it used a
+known root technique called Framaroot, which uses exploits named after Lord of the Rings
+characters. Other Android samples may use zero-days as was the case with Pegasus for iOS,
+but for the samples described here, the exploits are already known to the security research
+community.
+
+
+Feature comparison of Android vs. iOS Pegasus
+We analyzed the samples, along with the data we found in our threat network for family and
+variant distinctions across platforms, to reveal many similarities with Pegasus for iOS such as:
+● Capturing and exfiltration of data from popular messaging apps
+● Similarities in its ability to maintain stealth and persistence on device
+● String references to Pegasus
+● Use of MQTT for lightweight messaging on both platforms
+● C2 commands are delivered by SMS, and they use “verification code” style messages:
+● Similarities in Suicide functionality
+
+
+Communication Methods
+Similar to the iOS version of Pegasus, its Android equivalent is capable of communicating to
+attacker-controlled infrastructure via a number of different mechanisms and protocols. This
+includes via SMS, over HTTP, and through the Message Queue Telemetry Transport (MQTT)
+protocol. The following sections detail how the Android version of Pegasus utilizes each of these
+mechanisms and protocols.
+
+
+SMS/MMS/WAP
+Inbound SMS
+Similar to the methodology used by Pegasus for iOS, the Android package can receive
+commands contained in SMS message bodies which appear to be disguised as Google
+authentication codes. The command parser used by the Android version of the application
+appears compatible with messages that have been observed being sent to iOS devices.
+The application registers a content observer for the Android SMS content provider which
+performs a case insensitive search of the SMS message bodies for the string “your google
+verification code” on incoming SMS messages.
+SMS commands can include a command number, an ack ID, command arguments, and a
+signature.
+
+
+Data Gathering and Surveillance Functionality
+
+Targeted Applications
+
+As was the case with Pegasus for iOS, the Android counterpart also targets numerous
+messaging and communication applications. The apps we observed as targets included:
+○ WhatsApp
+○ Skype
+○ Facebook
+○ Viber
+○ Kakao
+○ Twitter
+○ Gmail
+○ Android’s Native Browser or Chrome
+○ Android’s Native Email
+○ Calendar
+
+
+Suicide Functionality
+
+As seen in the iOS version of Pegasus, the Android counterpart also includes suicide
+functionality to remove itself under a variety of different circumstances. Our analysis identified
+the following four cases where this functionality would be triggered:
+1. The MCC subscribe ID does not exist or is invalid
+2. An antidote file exists at /sdcard/MemosNoteNotes
+3. Pegasus for Android has not checked in with the servers for more than 60 days
+4. Pegasus for Android receives a remote command to remove itself
+
+Acknowledgment
+1.Dhanush Subhash
+2.k Abhinav Ranjan
+3.Arsha k
+4.Manaswi R
+5.Pallavi biju
